@@ -69,20 +69,20 @@ public struct ARow: Codable, Sendable, Hashable, Identifiable {
     }
 }
 
-extension ARow {
-    public enum Behavior: Codable, Hashable, Sendable {
+public extension ARow {
+    enum Behavior: Codable, Hashable, Sendable {
         case variable(AValueType)
         case computed
     }
 
-    public enum Style: Codable, Hashable, Sendable, CaseIterable {
+    enum Style: Codable, Hashable, Sendable, CaseIterable {
         case normal
         case emphasized
         case hidden
     }
 
     /// Conversion是一个Setter，可以利用formula反过来计算
-    public struct Conversion: Codable, Hashable, Sendable, Identifiable {
+    struct Conversion: Codable, Hashable, Sendable, Identifiable {
         /// 换算对象
         public var id: Int
         public var formula: AFormula
@@ -91,16 +91,16 @@ extension ARow {
 
 // MARK: - 简单版本构建ARow工具
 
-extension ARow {
-    public static func variable(id: Int = .random(in: .min ... .max), name: String, type valueType: AValueType, unit: AUnit?) -> ARow {
-        ARow(id: id, name: name, behavior: .variable(valueType), conversions: [], style: .normal, computationUnit: unit)
+public extension ARow {
+    static func variable(id: Int = .random(in: .min ... .max), name: String, type valueType: AValueType, unit: AUnit?) -> ARow {
+        ARow(id: id, name: name, behavior: .variable(valueType), conversions: [], style: .normal, value: valueType.baseValue(), computationUnit: unit)
     }
 
-    public static func computed(id: Int = .random(in: .min ... .max), name: String, unit: AUnit?, style: Style = .normal, createFormula: @escaping () -> AFormula) -> ARow {
+    static func computed(id: Int = .random(in: .min ... .max), name: String, unit: AUnit?, style: Style = .normal, createFormula: @escaping () -> AFormula) -> ARow {
         ARow(name: name, id: id, behavior: .computed, formula: createFormula(), conversions: [], style: style, digits: 5, value: nil, computationUnit: unit, currentUnit: nil)
     }
 
-    public static func conversion(id: Int = .random(in: .min ... .max), name: String, unit: AUnit?, style: Style = .normal, createFormula: @escaping () -> AFormula, createConversions: @escaping () -> [Conversion]) -> ARow {
+    static func conversion(id: Int = .random(in: .min ... .max), name: String, unit: AUnit?, style: Style = .normal, createFormula: @escaping () -> AFormula, createConversions: @escaping () -> [Conversion]) -> ARow {
         ARow(name: name, id: id, behavior: .computed, formula: createFormula(), conversions: createConversions(), style: style, digits: 5, value: nil, computationUnit: unit, currentUnit: nil)
     }
 }
