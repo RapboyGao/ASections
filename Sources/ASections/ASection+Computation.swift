@@ -42,7 +42,7 @@ extension [ASection] {
 
     // 转换指定row的值
     @Sendable
-    public mutating func convert(rowId: Int, newValue: AValue?) throws {
+    public mutating func convert(rowId: Int, newValue: AValue?, _ functions: [Int: @Sendable ([AValue]) throws -> AValue] = AFunction.functionInstances) throws {
         // 查找指定row的索引
         guard let rowIndex = findRow(by: rowId) else {
             throw ConversionError.rowNotFound(id: rowId)
@@ -59,7 +59,7 @@ extension [ASection] {
         }
 
         // 初次评估所有行，获取评估器
-        var evaluator = AFormulaEvaluator(rowValues: [:])
+        var evaluator = AFormulaEvaluator(rowValues: [:], functions)
         // 缓存所有行的索引
         var rowIndexCache = [Int: ARowIndex]()
         sectionLoop: for (sectionIndex, section) in self.enumerated() {
