@@ -83,11 +83,11 @@ public extension [ASection] {
         let date2: ARow = .computed(name: "date+diff1", unit: nil) {
             date1.row() + dateDiff1.row()
         }
-        let dateSection = ASection(name: "date", rows: [date1, date2])
+        let dateSection = ASection(name: "date", rows: [date1, dateDiff1, date2])
 
         let color1: ARow = .variable(name: "Color1", type: .color, unit: nil)
         let color2: ARow = .computed(name: "Color2", unit: nil) {
-            color1.row() * .value(.color(r: 0.3, g: 0.3, b: 0.3, alpha: 0.5, colorSpace: .displayP3))
+            color1.row()
         }
         let wind1: ARow = .variable(name: "WindLimit1", type: .groundWind, unit: .knots)
         let vector1: ARow = .variable(name: "Vector1", type: .point, unit: .knots)
