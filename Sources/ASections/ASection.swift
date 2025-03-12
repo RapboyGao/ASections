@@ -86,8 +86,9 @@ public extension [ASection] {
         let dateSection = ASection(name: "date", rows: [date1, dateDiff1, date2])
 
         let color1: ARow = .variable(name: "Color1", type: .color, unit: nil)
-        let color2: ARow = .computed(name: "Color2", unit: nil) {
-            color1.row()
+        let color2: ARow = .variable(name: "Color2", type: .color, unit: nil)
+        let color3: ARow = .computed(name: "Color3", unit: nil) {
+            color1.row() * color2.row()
         }
         let wind1: ARow = .variable(name: "WindLimit1", type: .groundWind, unit: .knots)
         let vector1: ARow = .variable(name: "Vector1", type: .point, unit: .knots)
@@ -95,7 +96,7 @@ public extension [ASection] {
         let vector3: ARow = .computed(name: "Vector1+2", unit: .knots) {
             vector1.row() + vector2.row()
         }
-        let miscSection = ASection(name: "Misc", rows: [color1, color2, wind1, vector1, vector2, vector3])
+        let miscSection = ASection(name: "Misc", rows: [color1, color2, color3, wind1, vector1, vector2, vector3])
 
         // Combine all sections
         let sections = [speedSection, distanceSection, conversionSection, booleanSection, dateSection, miscSection]
