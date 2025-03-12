@@ -8,16 +8,16 @@ public struct ASection: Codable, Sendable, Hashable, Identifiable {
     public var rows: [ARow]
 }
 
-extension [ASection] {
+public extension [ASection] {
     @Sendable
-    public func newId() -> Int {
+    func newId() -> Int {
         let allIDs = self.reduce(Set<Int>()) { result, section in
             let rowIDs = section.rows.reduce(Set<Int>()) { partialResult, row in
                 partialResult.union([row.id])
             }
             return result.union(rowIDs).union([section.id])
         }
-        for _ in 0...100 {
+        for _ in 0 ... 100 {
             let newValue = Int.random(in: .min ... .max)
             guard allIDs.contains(newValue)
             else { return newValue }
@@ -27,8 +27,8 @@ extension [ASection] {
 }
 
 @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
-extension [ASection] {
-    public static func createExample() -> [ASection] {
+public extension [ASection] {
+    static func createExample() -> [ASection] {
         // Section 1: Speed Calculation
         var length = ARow.variable(name: "Length", type: .number, unit: .meters)
         length.value = 235
@@ -79,13 +79,21 @@ extension [ASection] {
 
         var date1: ARow = .variable(name: "date1", type: .calendar, unit: nil)
         date1.value = .calendar(.now, timeZone: .current)
-        let date2: ARow = .computed(name: "date+1Mon", unit: nil) {
-            date1.row() + .dateDifference(.init(month: 1))
+        let dateDiff1: ARow = .variable(name: "diff1", type: .dateDifference, unit: nil)
+        let date2: ARow = .computed(name: "date+diff1", unit: nil) {
+            date1.row() + dateDiff1.row()
         }
         let dateSection = ASection(name: "date", rows: [date1, date2])
 
+        let color1: ARow = .variable(name: "Color1", type: .color, unit: nil)
+        let color2: ARow = .computed(name: "Color2", unit: nil) {
+            color1.row() * .value(.color(r: 0.3, g: 0.3, b: 0.3, alpha: 0.5, colorSpace: .displayP3))
+        }
+        let wind1: ARow = .variable(name: "WindLimit", type: .groundWind, unit: .knots)
+        let colorSection = ASection(name: "Colors", rows: [color1, color2])
+
         // Combine all sections
-        let sections = [speedSection, distanceSection, conversionSection, booleanSection, dateSection]
+        let sections = [speedSection, distanceSection, conversionSection, booleanSection, dateSection, colorSection]
 
         return sections
     }
